@@ -180,15 +180,8 @@ export default function MenuOverlay({ open, onClose, locale, dict }: Props) {
         </nav>
 
         <div className="mt-40 px-20 pb-40 s:px-40">
-          <p
-            data-menu-meta
-            className="font-display border-white-subtle border-b pb-16 text-[2.2rem] leading-[1.3] font-light"
-          >
-            {dict.nav.contact}
-          </p>
-
           {/* Sosyal medya — yuvarlak, ince kenarlıklı düğmeler */}
-          <ul data-menu-meta className="mt-28 flex items-center gap-12">
+          <ul data-menu-meta className="flex items-center gap-12">
             {socialLinks.map((social) => (
               <li key={social.label}>
                 <a
