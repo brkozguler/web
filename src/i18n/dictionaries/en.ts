@@ -194,6 +194,8 @@ const en: Dictionary = {
     metaTitle: "Accommodation",
     metaDescription:
       "Room types at Arcanus Hotels Sorgun: standard rooms, sea view rooms, family rooms, superior rooms and suites.",
+    relatedTitle: "Other room types",
+    galleryLabel: "Room gallery",
   },
 
   activities: {

@@ -87,6 +87,8 @@ export type Dictionary = {
     description: string;
     metaTitle: string;
     metaDescription: string;
+    relatedTitle: string;
+    galleryLabel: string;
   };
   activities: {
     eyebrow: string;

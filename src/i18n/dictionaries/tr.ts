@@ -197,6 +197,8 @@ const tr: Dictionary = {
     metaTitle: "Konaklama",
     metaDescription:
       "Arcanus Hotels Sorgun oda tipleri: standart oda, deniz manzaralı oda, aile odası, superior oda ve suite seçenekleri.",
+    relatedTitle: "Diğer oda tipleri",
+    galleryLabel: "Oda görselleri",
   },
 
   activities: {

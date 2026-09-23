@@ -197,6 +197,8 @@ const de: Dictionary = {
     metaTitle: "Unterkunft",
     metaDescription:
       "Zimmertypen im Arcanus Hotels Sorgun: Standardzimmer, Zimmer mit Meerblick, Familienzimmer, Superior Zimmer und Suiten.",
+    relatedTitle: "Weitere Zimmertypen",
+    galleryLabel: "Zimmergalerie",
   },
 
   activities: {

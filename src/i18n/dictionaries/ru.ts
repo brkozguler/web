@@ -201,6 +201,8 @@ const ru: Dictionary = {
     metaTitle: "Проживание",
     metaDescription:
       "Категории номеров Arcanus Hotels Sorgun: стандартные номера, номера с видом на море, семейные номера, Superior и сьюты.",
+    relatedTitle: "Другие категории номеров",
+    galleryLabel: "Галерея номера",
   },
 
   activities: {

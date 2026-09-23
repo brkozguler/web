@@ -6,6 +6,8 @@ type Props = {
   title: string;
   scrollLabel?: string;
   tone?: MediaTone;
+  /** Detay sayfalarında referans tam ekran hero kullanıyor */
+  fullHeight?: boolean;
 };
 
 /**
@@ -17,11 +19,14 @@ export default function PageHero({
   title,
   scrollLabel,
   tone = "dark",
+  fullHeight = false,
 }: Props) {
   return (
     <section
       data-hero
-      className="bg-ink-pure relative flex h-[55rem] w-full items-center justify-center overflow-hidden"
+      className={`bg-ink-pure relative flex w-full items-center justify-center overflow-hidden ${
+        fullHeight ? "h-screen min-h-[100svh]" : "h-[55rem]"
+      }`}
     >
       <div className="absolute inset-0">
         <Media
