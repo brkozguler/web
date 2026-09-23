@@ -4,6 +4,15 @@ import Link from "next/link";
 import { useEffect, useRef } from "react";
 
 import LanguageSwitcher from "@/components/layout/LanguageSwitcher";
+import {
+  FacebookIcon,
+  InstagramIcon,
+  LinkedinIcon,
+  MailIcon,
+  PhoneIcon,
+  TiktokIcon,
+  YoutubeIcon,
+} from "@/components/ui/icons";
 import type { Locale } from "@/config/locales";
 import { pathFor, type RouteKey } from "@/config/routes";
 import { siteConfig } from "@/config/site";
@@ -18,6 +27,14 @@ type Props = {
 };
 
 type NavKey = keyof Dictionary["nav"] & RouteKey;
+
+const socialLinks = [
+  { label: "Facebook", href: siteConfig.social.facebook, Icon: FacebookIcon },
+  { label: "Instagram", href: siteConfig.social.instagram, Icon: InstagramIcon },
+  { label: "YouTube", href: siteConfig.social.youtube, Icon: YoutubeIcon },
+  { label: "TikTok", href: siteConfig.social.tiktok, Icon: TiktokIcon },
+  { label: "LinkedIn", href: siteConfig.social.linkedin, Icon: LinkedinIcon },
+];
 
 /** Panelde tek liste hâlinde, ayraçlarla ayrılmış menü */
 const menuKeys: NavKey[] = [
@@ -162,22 +179,53 @@ export default function MenuOverlay({ open, onClose, locale, dict }: Props) {
           </ul>
         </nav>
 
-        <div className="border-white-subtle mt-40 flex flex-col gap-20 border-t px-20 py-30 s:px-40">
-          <div data-menu-meta className="flex flex-col gap-8">
-            <a
-              href={`tel:${siteConfig.phoneHref}`}
-              className="t-body opacity-80 transition-opacity hover:opacity-100"
-            >
-              {dict.footer.phoneLabel} {siteConfig.phone}
-            </a>
-            <a
-              href={`mailto:${siteConfig.email}`}
-              className="t-body opacity-80 transition-opacity hover:opacity-100"
-            >
-              {dict.footer.emailLabel} {siteConfig.email}
-            </a>
-          </div>
-          <div data-menu-meta>
+        <div className="mt-40 px-20 pb-40 s:px-40">
+          <p
+            data-menu-meta
+            className="font-display border-white-subtle border-b pb-16 text-[2.2rem] leading-[1.3] font-light"
+          >
+            {dict.nav.contact}
+          </p>
+
+          {/* Sosyal medya — yuvarlak, ince kenarlıklı düğmeler */}
+          <ul data-menu-meta className="mt-28 flex items-center gap-12">
+            {socialLinks.map((social) => (
+              <li key={social.label}>
+                <a
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={social.label}
+                  className="border-white-tint/40 hover:border-white-pure flex size-40 items-center justify-center rounded-full border transition-colors duration-500"
+                >
+                  <social.Icon className="size-16" />
+                </a>
+              </li>
+            ))}
+          </ul>
+
+          <ul data-menu-meta className="mt-28 flex flex-col gap-14">
+            <li>
+              <a
+                href={`mailto:${siteConfig.email}`}
+                className="t-body group flex items-center gap-12 transition-opacity duration-500 hover:opacity-100"
+              >
+                <MailIcon className="text-white-tint size-18 shrink-0" />
+                {siteConfig.email}
+              </a>
+            </li>
+            <li>
+              <a
+                href={`tel:${siteConfig.phoneHref}`}
+                className="t-body group flex items-center gap-12 transition-opacity duration-500 hover:opacity-100"
+              >
+                <PhoneIcon className="text-white-tint size-18 shrink-0" />
+                {siteConfig.phone}
+              </a>
+            </li>
+          </ul>
+
+          <div data-menu-meta className="mt-28">
             <LanguageSwitcher />
           </div>
         </div>
