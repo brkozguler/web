@@ -19,7 +19,8 @@ type Props = {
 
 type NavKey = keyof Dictionary["nav"] & RouteKey;
 
-const primaryKeys: NavKey[] = [
+/** Panelde tek liste hâlinde, ayraçlarla ayrılmış menü */
+const menuKeys: NavKey[] = [
   "hotel",
   "rooms",
   "dining",
@@ -27,24 +28,35 @@ const primaryKeys: NavKey[] = [
   "experiences",
   "spa",
   "meetings",
+  "gallery",
+  "side",
+  "blog",
+  "contact",
 ];
 
-const secondaryKeys: NavKey[] = ["gallery", "side", "blog", "contact"];
-
+/**
+ * Soldan açılan yan menü paneli. Panel `translateX(-100%)` konumundan kayarak
+ * gelir, arkadaki sayfa koyu bir perdeyle kapanır ve bağlantılar sırayla
+ * belirir. Kapatma: header'daki düğme, perdeye tıklama veya Esc.
+ */
 export default function MenuOverlay({ open, onClose, locale, dict }: Props) {
   const rootRef = useRef<HTMLDivElement>(null);
+  const backdropRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLElement>(null);
   const timeline = useRef<gsap.core.Timeline | null>(null);
 
   useEffect(() => {
-    const root = rootRef.current;
-    if (!root) return;
+    const backdrop = backdropRef.current;
+    const panel = panelRef.current;
+    if (!backdrop || !panel) return;
 
-    const links = root.querySelectorAll<HTMLElement>("[data-menu-line]");
-    const meta = root.querySelectorAll<HTMLElement>("[data-menu-meta]");
+    const links = panel.querySelectorAll<HTMLElement>("[data-menu-line]");
+    const meta = panel.querySelectorAll<HTMLElement>("[data-menu-meta]");
 
     if (prefersReducedMotion()) {
-      gsap.set(root, { clipPath: open ? "inset(0% 0 0% 0)" : "inset(0 0 100% 0)" });
-      gsap.set([links, meta], { yPercent: 0, opacity: 1 });
+      gsap.set(panel, { xPercent: open ? 0 : -100, x: 0 });
+      gsap.set(backdrop, { opacity: open ? 1 : 0 });
+      gsap.set([links, meta], { x: 0, opacity: 1 });
       return;
     }
 
@@ -52,35 +64,43 @@ export default function MenuOverlay({ open, onClose, locale, dict }: Props) {
 
     if (open) {
       const tl = gsap.timeline();
-      tl.fromTo(
-        root,
-        { clipPath: "inset(0 0 100% 0)" },
-        {
-          clipPath: "inset(0 0 0% 0)",
-          duration: 0.8,
-          ease: "power3.inOut",
-        },
-      )
+      tl.to(backdrop, { opacity: 1, duration: 0.5, ease: "power2.out" }, 0)
+        .fromTo(
+          panel,
+          // `x` de sıfırlanıyor: SSR'daki translateX(-100%) GSAP tarafından
+          // piksel cinsinden okunuyor, yalnızca xPercent'i sıfırlamak yetmiyor.
+          { xPercent: -100, x: 0 },
+          { xPercent: 0, x: 0, duration: 0.7, ease: "power3.inOut" },
+          0,
+        )
         .fromTo(
           links,
-          { yPercent: 110 },
-          { yPercent: 0, duration: 0.75, stagger: 0.06, ease: "power3.out" },
-          "-=0.35",
+          { x: -24, opacity: 0 },
+          {
+            x: 0,
+            opacity: 1,
+            duration: 0.5,
+            stagger: 0.04,
+            ease: "power3.out",
+          },
+          0.28,
         )
         .fromTo(
           meta,
-          { opacity: 0, y: 16 },
-          { opacity: 1, y: 0, duration: 0.6, stagger: 0.05, ease: "power2.out" },
-          "-=0.4",
+          { opacity: 0 },
+          { opacity: 1, duration: 0.4, stagger: 0.05, ease: "power2.out" },
+          0.5,
         );
       timeline.current = tl;
     } else {
       const tl = gsap.timeline();
-      tl.to(root, {
-        clipPath: "inset(0 0 100% 0)",
-        duration: 0.6,
-        ease: "power3.inOut",
-      }).set(links, { yPercent: 110 });
+      tl.to(
+        panel,
+        { xPercent: -100, x: 0, duration: 0.55, ease: "power3.inOut" },
+        0,
+      )
+        .to(backdrop, { opacity: 0, duration: 0.45, ease: "power2.inOut" }, 0)
+        .set([links, meta], { clearProps: "opacity,transform" });
       timeline.current = tl;
     }
   }, [open]);
@@ -109,68 +129,63 @@ export default function MenuOverlay({ open, onClose, locale, dict }: Props) {
       ref={rootRef}
       id="site-menu"
       aria-hidden={!open}
-      className={`bg-main text-white-pure fixed inset-0 z-40 flex flex-col justify-between overflow-y-auto pt-120 pb-40 s:pb-60 ${
+      className={`fixed inset-0 z-40 ${
         open ? "pointer-events-auto" : "pointer-events-none"
       }`}
-      style={{ clipPath: "inset(0 0 100% 0)" }}
     >
-      <nav className="site-max" aria-label={dict.nav.menu}>
-        <ul className="site-grid gap-y-8">
-          <li className="col-span-4 s:col-span-8 l:col-span-7">
-            <ul>
-              {primaryKeys.map((key) => (
-                <li key={key} className="line-mask">
-                  <Link
-                    data-menu-line
-                    href={pathFor(key, locale)}
-                    onClick={onClose}
-                    className="mm-link block py-4 transition-opacity duration-500 hover:opacity-60"
-                  >
-                    {dict.nav[key]}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </li>
+      {/* Arka perde */}
+      <div
+        ref={backdropRef}
+        onClick={onClose}
+        className="bg-ink-pure/55 absolute inset-0 opacity-0"
+        aria-hidden
+      />
 
-          <li className="col-span-4 s:col-span-8 l:col-span-4 l:col-start-9 mt-40 l:mt-12">
-            <ul className="flex flex-col gap-y-12">
-              {secondaryKeys.map((key) => (
-                <li key={key} className="line-mask">
-                  <Link
-                    data-menu-line
-                    href={pathFor(key, locale)}
-                    onClick={onClose}
-                    className="t-body-l block transition-opacity duration-500 hover:opacity-60"
-                  >
-                    {dict.nav[key]}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </li>
-        </ul>
-      </nav>
+      <aside
+        ref={panelRef}
+        className="bg-main text-white-pure absolute top-0 left-0 flex h-full w-full flex-col overflow-y-auto s:w-[52rem]"
+        style={{ transform: "translateX(-100%)" }}
+      >
+        <nav
+          className="flex-1 px-20 pt-120 s:px-40"
+          aria-label={dict.nav.menu}
+        >
+          <ul className="flex flex-col">
+            {menuKeys.map((key) => (
+              <li key={key} className="border-white-subtle border-b">
+                <Link
+                  data-menu-line
+                  href={pathFor(key, locale)}
+                  onClick={onClose}
+                  className="font-display block py-18 text-[2.4rem] leading-[1.3] font-light transition-opacity duration-500 hover:opacity-60"
+                >
+                  {dict.nav[key]}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
 
-      <div className="site-max mt-60 flex flex-col gap-24 s:flex-row s:items-end s:justify-between">
-        <div data-menu-meta className="flex flex-col gap-8">
-          <a
-            href={`tel:${siteConfig.phoneHref}`}
-            className="t-body opacity-80 transition-opacity hover:opacity-100"
-          >
-            {dict.footer.phoneLabel} {siteConfig.phone}
-          </a>
-          <a
-            href={`mailto:${siteConfig.email}`}
-            className="t-body opacity-80 transition-opacity hover:opacity-100"
-          >
-            {dict.footer.emailLabel} {siteConfig.email}
-          </a>
+        <div className="border-white-subtle mt-40 flex flex-col gap-20 border-t px-20 py-30 s:px-40">
+          <div data-menu-meta className="flex flex-col gap-8">
+            <a
+              href={`tel:${siteConfig.phoneHref}`}
+              className="t-body opacity-80 transition-opacity hover:opacity-100"
+            >
+              {dict.footer.phoneLabel} {siteConfig.phone}
+            </a>
+            <a
+              href={`mailto:${siteConfig.email}`}
+              className="t-body opacity-80 transition-opacity hover:opacity-100"
+            >
+              {dict.footer.emailLabel} {siteConfig.email}
+            </a>
+          </div>
+          <div data-menu-meta>
+            <LanguageSwitcher />
+          </div>
         </div>
-        <div data-menu-meta>
-          <LanguageSwitcher />
-        </div>
-      </div>
+      </aside>
     </div>
   );
 }

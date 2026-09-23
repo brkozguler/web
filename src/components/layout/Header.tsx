@@ -104,9 +104,13 @@ export default function Header({ locale, dict }: Props) {
               </span>
             </button>
 
+            {/* Menü açıkken panel tam ekran olduğu için mobilde logo ve
+                CTA gizlenir; masaüstünde panel dar olduğundan görünür kalır. */}
             <Link
               href={homePath(locale)}
-              className="pointer-events-auto absolute left-1/2 -translate-x-1/2"
+              className={`pointer-events-auto absolute left-1/2 -translate-x-1/2 transition-opacity duration-500 ${
+                open ? "max-s:pointer-events-none max-s:opacity-0" : ""
+              }`}
               aria-label={dict.nav.hotel}
             >
               <Logo />
@@ -115,7 +119,7 @@ export default function Header({ locale, dict }: Props) {
             <ButtonLink
               href={pathFor("contact", locale)}
               label={dict.nav.contact}
-              className="pointer-events-auto hidden s:inline-flex"
+              className="pointer-events-auto max-s:hidden"
             />
           </div>
         </div>
