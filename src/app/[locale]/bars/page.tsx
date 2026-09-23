@@ -65,7 +65,7 @@ export default async function BarsPage({ params }: Props) {
         scrollLabel={dict.common.scrollDown}
         tone="dark"
       />
-      <CollectionCards cards={cards} />
+      <CollectionCards cards={cards} ctaLabel={dict.common.discover} />
     </>
   );
 }

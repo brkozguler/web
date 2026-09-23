@@ -26,7 +26,7 @@ const tr: Dictionary = {
 
   common: {
     learnMore: "DAHA FAZLASI",
-    discover: "KEŞFEDİN",
+    discover: "KEŞFET",
     bookNow: "REZERVASYON",
     scrollDown: "Aşağı kaydırın",
     backHome: "Ana sayfaya dön",
