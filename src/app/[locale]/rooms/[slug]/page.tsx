@@ -67,7 +67,6 @@ export default async function RoomPage({ params }: Props) {
         title={room.title[locale]}
         scrollLabel={dict.common.scrollDown}
         tone={room.tone}
-        fullHeight
       />
 
       <CollectionArticle
