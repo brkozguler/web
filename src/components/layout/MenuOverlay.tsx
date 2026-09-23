@@ -21,16 +21,11 @@ type NavKey = keyof Dictionary["nav"] & RouteKey;
 
 /** Panelde tek liste hâlinde, ayraçlarla ayrılmış menü */
 const menuKeys: NavKey[] = [
-  "hotel",
   "rooms",
   "dining",
   "bars",
   "experiences",
-  "spa",
-  "meetings",
   "gallery",
-  "side",
-  "blog",
   "contact",
 ];
 
@@ -143,7 +138,8 @@ export default function MenuOverlay({ open, onClose, locale, dict }: Props) {
 
       <aside
         ref={panelRef}
-        className="bg-main text-white-pure absolute top-0 left-0 flex h-full w-full flex-col overflow-y-auto s:w-[52rem]"
+        // Kaydırma çubuğu gizli; içerik ekrana sığmadığında yine de kaydırılabilir.
+        className="bg-main text-white-pure absolute top-0 left-0 flex h-full w-full flex-col overflow-y-auto [scrollbar-width:none] s:w-[52rem] [&::-webkit-scrollbar]:hidden"
         style={{ transform: "translateX(-100%)" }}
       >
         <nav
